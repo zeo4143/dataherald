@@ -59,3 +59,5 @@ class PromptSQLGenerationNLGenerationRequest(NLGenerationRequest):
 
 class UpdateMetadataRequest(BaseModel):
     metadata: dict | None
+
+

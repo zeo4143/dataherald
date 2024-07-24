@@ -2,7 +2,8 @@ import io
 from abc import ABC, abstractmethod
 from typing import List
 
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, UploadFile
+from fastapi.responses import JSONResponse
 
 from dataherald.api.types.query import Query
 from dataherald.api.types.requests import (
@@ -271,5 +272,11 @@ class API(Component, ABC):
     async def stream_create_prompt_and_sql_generation(
         self,
         request: StreamPromptSQLGenerationRequest,
+    ):
+        pass
+
+    @abstractmethod
+    async def upload_database_schema(
+            self, csv_file: UploadFile
     ):
         pass

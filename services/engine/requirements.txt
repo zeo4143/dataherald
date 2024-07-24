@@ -44,3 +44,9 @@ clickhouse-sqlalchemy==0.2.5
 astrapy==0.7.6
 pymssql==2.2.11
 sqlalchemy-redshift==0.8.14
+python-multipart
+
+setuptools~=65.5.0
+pytz~=2024.1
+pandas~=1.5.3
+numpy~=1.26.4

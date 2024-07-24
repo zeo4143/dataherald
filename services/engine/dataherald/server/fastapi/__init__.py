@@ -2,12 +2,12 @@ import os
 from typing import List
 
 import fastapi
-from fastapi import BackgroundTasks, status
+from fastapi import BackgroundTasks, status, UploadFile
 from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
 
-import dataherald
+import dataherald as dataherald
 from dataherald.api.types.query import Query
 from dataherald.api.types.requests import (
     NLGenerationRequest,
@@ -368,6 +368,13 @@ class FastAPI(dataherald.server.Server):
             "/api/v1/heartbeat", self.heartbeat, methods=["GET"], tags=["System"]
         )
 
+        self.router.add_api_route(
+            "/api/v1/database-connection-GenAI",
+            self.upload_database_schema,
+            methods=["POST"], 
+            tags=["GenAI"]
+        )
+        
         self._app.include_router(self.router)
         use_route_names_as_operation_ids(self._app)
 
@@ -610,3 +617,8 @@ class FastAPI(dataherald.server.Server):
             self._api.stream_create_prompt_and_sql_generation(request),
             media_type="text/event-stream",
         )
+        
+    async def upload_database_schema(
+        self, csv_file: UploadFile
+    ) -> JSONResponse:
+        return await self._api.upload_database_schema(csv_file)

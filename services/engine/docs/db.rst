@@ -11,7 +11,7 @@ The application logic is stored in the following Mongo collections:
 
 1. ``database_connection``- Stores the information needed to connect to a structured database to be queried.
 2. ``nl_question`` - List of natural language questions asked so far through the ``/question`` endpoint
-3. ``nl_query_response`` - Stores generated responses from Dataherald AI engine, including 
+3. ``nl_query_response`` - Stores generated responses from dataherald AI engine, including
 4. ``table_schema_detail`` - Stores metadata about the tables and columns from the connected structured data stores. These can be added automatically from a scan or manually by the admin.
 5. ``golden_records`` - Stores the golden records verfied by the admin or inserted manually by the admin. These are used to augment the prompts and improve the performance of the engine.
 

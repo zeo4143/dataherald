@@ -277,6 +277,6 @@ class API(Component, ABC):
 
     @abstractmethod
     async def upload_database_schema(
-            self, csv_file: UploadFile
+            self, csv_file: UploadFile, background_tasks: BackgroundTasks
     ):
         pass

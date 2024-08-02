@@ -7,7 +7,7 @@ from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
 
-import dataherald as dataherald
+import dataherald
 from dataherald.api.types.query import Query
 from dataherald.api.types.requests import (
     NLGenerationRequest,
@@ -619,6 +619,6 @@ class FastAPI(dataherald.server.Server):
         )
         
     async def upload_database_schema(
-        self, csv_file: UploadFile
+        self, csv_file: UploadFile, background_tasks: BackgroundTasks
     ) -> JSONResponse:
-        return await self._api.upload_database_schema(csv_file)
+        return await self._api.upload_database_schema(csv_file, background_tasks)

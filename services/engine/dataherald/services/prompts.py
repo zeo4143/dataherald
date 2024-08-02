@@ -28,7 +28,6 @@ class PromptService:
                 "Schema not supported for this db",
                 description=f"The {db_connection.dialect} dialect doesn't support schemas",
             )
-
         prompt = Prompt(
             text=prompt_request.text,
             db_connection_id=prompt_request.db_connection_id,

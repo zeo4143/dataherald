@@ -1,7 +1,7 @@
 import json
 
 import httpx
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 
 from config import settings, ssh_settings
 from exceptions.exception_handlers import raise_engine_exception
@@ -39,12 +39,12 @@ class DBConnectionService:
         return sorted(self.repo.get_db_connections(org_id), key=lambda x: x.alias)
 
     def get_db_connection(
-        self, db_connection_id: str, org_id: str
+            self, db_connection_id: str, org_id: str
     ) -> DBConnectionResponse:
         return self.get_db_connection_in_org(db_connection_id, org_id)
 
     def upload_file(
-        self, db_connection_request: DBConnectionRequest, file: UploadFile | None
+            self, db_connection_request: DBConnectionRequest, file: UploadFile | None
     ) -> str | None:
         s3 = S3()
         if db_connection_request.bigquery_credential_file_content:
@@ -57,11 +57,47 @@ class DBConnectionService:
             return db_connection_request.sqlite_file_path
         return None
 
+    async def add_db_connection_using_csv(
+            self,
+            csv_file: UploadFile,
+            org_id: str
+    ) -> DBConnectionResponse:
+        if csv_file.content_type != 'text/csv':
+            raise HTTPException(status_code=400, detail="Invalid file format")
+
+        db_connection = self.repo.get_db_connection_by_alias(csv_file.filename, org_id)
+        if db_connection:
+            raise DBConnectionAliasExistsError(db_connection.id, org_id)
+
+        try:
+            metadata = DBConnectionMetadata(
+                dh_internal=DHDBConnectionMetadata(organization_id=org_id)
+            ).json()
+
+            files = {
+                'csv_file': (csv_file.filename, await csv_file.read(), csv_file.content_type)
+            }
+            data = {'metadata': metadata}
+
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    settings.engine_url + "/database-connection-GenAI",
+                    files=files,
+                    data=data,
+                    timeout=settings.default_engine_timeout,
+                )
+
+                raise_engine_exception(response, org_id=org_id)
+                return DBConnectionResponse(**response.json())
+
+        except Exception as e:
+            HTTPException(status_code=500, detail=str(e))
+
     async def add_db_connection(
-        self,
-        db_connection_request: DBConnectionRequest,
-        org_id: str,
-        file: UploadFile | None = None,
+            self,
+            db_connection_request: DBConnectionRequest,
+            org_id: str,
+            file: UploadFile | None = None,
     ) -> DBConnectionResponse:
         reserved_key_in_metadata(db_connection_request.metadata)
         organization = self.org_service.get_organization(org_id)
@@ -120,11 +156,11 @@ class DBConnectionService:
             return db_connection
 
     async def update_db_connection(
-        self,
-        db_connection_id,
-        db_connection_request: DBConnectionRequest,
-        org_id: str,
-        file: UploadFile | None = None,
+            self,
+            db_connection_id,
+            db_connection_request: DBConnectionRequest,
+            org_id: str,
+            file: UploadFile | None = None,
     ) -> DBConnectionResponse:
         reserved_key_in_metadata(db_connection_request.metadata)
         organization = self.org_service.get_organization(org_id)
@@ -164,7 +200,7 @@ class DBConnectionService:
             return DBConnectionResponse(**response.json())
 
     async def add_sample_db_connection(
-        self, sample_request: SampleDBRequest, org_id: str
+            self, sample_request: SampleDBRequest, org_id: str
     ) -> DBConnectionResponse:
         sample_db_dict = await self.sample_db.add_sample_db(
             sample_request.sample_db_id, org_id
@@ -184,7 +220,7 @@ class DBConnectionService:
         ]
 
     def get_db_connection_in_org(
-        self, db_connection_id: str, org_id: str
+            self, db_connection_id: str, org_id: str
     ) -> DBConnection:
         db_connection = self.repo.get_db_connection(db_connection_id, org_id)
         if not db_connection:

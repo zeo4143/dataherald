@@ -2,7 +2,7 @@ import io
 from abc import ABC, abstractmethod
 from typing import List
 
-from fastapi import BackgroundTasks, UploadFile
+from fastapi import BackgroundTasks, UploadFile, Form
 from fastapi.responses import JSONResponse
 
 from dataherald.api.types.query import Query
@@ -277,6 +277,6 @@ class API(Component, ABC):
 
     @abstractmethod
     async def upload_database_schema(
-            self, csv_file: UploadFile, background_tasks: BackgroundTasks
-    ):
+            self, csv_file: UploadFile, background_tasks: BackgroundTasks, metadata: str = Form(...)
+    ) -> DatabaseConnectionResponse:
         pass

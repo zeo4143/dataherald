@@ -2,7 +2,7 @@ import os
 from typing import List
 
 import fastapi
-from fastapi import BackgroundTasks, status, UploadFile
+from fastapi import BackgroundTasks, status, UploadFile, Form
 from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
@@ -371,10 +371,10 @@ class FastAPI(dataherald.server.Server):
         self.router.add_api_route(
             "/api/v1/database-connection-GenAI",
             self.upload_database_schema,
-            methods=["POST"], 
+            methods=["POST"],
             tags=["GenAI"]
         )
-        
+
         self._app.include_router(self.router)
         use_route_names_as_operation_ids(self._app)
 
@@ -382,12 +382,12 @@ class FastAPI(dataherald.server.Server):
         return self._app
 
     def scan_db(
-        self, scanner_request: ScannerRequest, background_tasks: BackgroundTasks
+            self, scanner_request: ScannerRequest, background_tasks: BackgroundTasks
     ) -> list[TableDescriptionResponse]:
         return self._api.scan_db(scanner_request, background_tasks)
 
     def refresh_table_description(
-        self, refresh_table_description: RefreshTableDescriptionRequest
+            self, refresh_table_description: RefreshTableDescriptionRequest
     ) -> list[TableDescriptionResponse]:
         return self._api.refresh_table_description(refresh_table_description)
 
@@ -398,7 +398,7 @@ class FastAPI(dataherald.server.Server):
         return self._api.get_prompt(prompt_id)
 
     def update_prompt(
-        self, prompt_id: str, update_metadata_request: UpdateMetadataRequest
+            self, prompt_id: str, update_metadata_request: UpdateMetadataRequest
     ) -> PromptResponse:
         return self._api.update_prompt(prompt_id, update_metadata_request)
 
@@ -406,17 +406,17 @@ class FastAPI(dataherald.server.Server):
         return self._api.get_prompts(db_connection_id)
 
     def create_sql_generation(
-        self, prompt_id: str, sql_generation_request: SQLGenerationRequest
+            self, prompt_id: str, sql_generation_request: SQLGenerationRequest
     ) -> SQLGenerationResponse:
         return self._api.create_sql_generation(prompt_id, sql_generation_request)
 
     def create_prompt_and_sql_generation(
-        self, prompt_sql_generation_request: PromptSQLGenerationRequest
+            self, prompt_sql_generation_request: PromptSQLGenerationRequest
     ) -> SQLGenerationResponse:
         return self._api.create_prompt_and_sql_generation(prompt_sql_generation_request)
 
     def get_sql_generations(
-        self, prompt_id: str | None = None
+            self, prompt_id: str | None = None
     ) -> list[SQLGenerationResponse]:
         return self._api.get_sql_generations(prompt_id)
 
@@ -424,33 +424,33 @@ class FastAPI(dataherald.server.Server):
         return self._api.get_sql_generation(sql_generation_id)
 
     def update_sql_generation(
-        self, sql_generation_id: str, update_metadata_request: UpdateMetadataRequest
+            self, sql_generation_id: str, update_metadata_request: UpdateMetadataRequest
     ) -> SQLGenerationResponse:
         return self._api.update_sql_generation(
             sql_generation_id, update_metadata_request
         )
 
     def create_nl_generation(
-        self, sql_generation_id: str, nl_generation_request: NLGenerationRequest
+            self, sql_generation_id: str, nl_generation_request: NLGenerationRequest
     ) -> NLGenerationResponse:
         return self._api.create_nl_generation(sql_generation_id, nl_generation_request)
 
     def create_sql_and_nl_generation(
-        self,
-        prompt_id: str,
-        nl_generation_sql_generation_request: NLGenerationsSQLGenerationRequest,
+            self,
+            prompt_id: str,
+            nl_generation_sql_generation_request: NLGenerationsSQLGenerationRequest,
     ) -> NLGenerationResponse:
         return self._api.create_sql_and_nl_generation(
             prompt_id, nl_generation_sql_generation_request
         )
 
     def create_prompt_sql_and_nl_generation(
-        self, request: PromptSQLGenerationNLGenerationRequest
+            self, request: PromptSQLGenerationNLGenerationRequest
     ) -> NLGenerationResponse:
         return self._api.create_prompt_sql_and_nl_generation(request)
 
     def get_nl_generations(
-        self, sql_generation_id: str | None = None
+            self, sql_generation_id: str | None = None
     ) -> list[NLGenerationResponse]:
         return self._api.get_nl_generations(sql_generation_id)
 
@@ -458,7 +458,7 @@ class FastAPI(dataherald.server.Server):
         return self._api.get_nl_generation(nl_generation_id)
 
     def update_nl_generation(
-        self, nl_generation_id: str, update_metadata_request: UpdateMetadataRequest
+            self, nl_generation_id: str, update_metadata_request: UpdateMetadataRequest
     ) -> NLGenerationResponse:
         return self._api.update_nl_generation(nl_generation_id, update_metadata_request)
 
@@ -469,7 +469,7 @@ class FastAPI(dataherald.server.Server):
         return self.root()
 
     def create_database_connection(
-        self, database_connection_request: DatabaseConnectionRequest
+            self, database_connection_request: DatabaseConnectionRequest
     ) -> DatabaseConnectionResponse:
         """Creates a database connection"""
         return self._api.create_database_connection(database_connection_request)
@@ -479,9 +479,9 @@ class FastAPI(dataherald.server.Server):
         return self._api.list_database_connections()
 
     def update_database_connection(
-        self,
-        db_connection_id: str,
-        database_connection_request: DatabaseConnectionRequest,
+            self,
+            db_connection_id: str,
+            database_connection_request: DatabaseConnectionRequest,
     ) -> DatabaseConnection:
         """Creates a database connection"""
         return self._api.update_database_connection(
@@ -489,9 +489,9 @@ class FastAPI(dataherald.server.Server):
         )
 
     def update_table_description(
-        self,
-        table_description_id: str,
-        table_description_request: TableDescriptionRequest,
+            self,
+            table_description_id: str,
+            table_description_request: TableDescriptionRequest,
     ) -> TableDescriptionResponse:
         """Add descriptions for tables and columns"""
         return self._api.update_table_description(
@@ -499,13 +499,13 @@ class FastAPI(dataherald.server.Server):
         )
 
     def list_table_descriptions(
-        self, db_connection_id: str, table_name: str | None = None
+            self, db_connection_id: str, table_name: str | None = None
     ) -> list[TableDescriptionResponse]:
         """List table descriptions"""
         return self._api.list_table_descriptions(db_connection_id, table_name)
 
     def get_table_description(
-        self, table_description_id: str
+            self, table_description_id: str
     ) -> TableDescriptionResponse:
         """Get description"""
         return self._api.get_table_description(table_description_id)
@@ -533,24 +533,24 @@ class FastAPI(dataherald.server.Server):
         return self._api.delete_golden_sql(golden_sql_id)
 
     def add_golden_sqls(
-        self, golden_sqls: List[GoldenSQLRequest]
+            self, golden_sqls: List[GoldenSQLRequest]
     ) -> List[GoldenSQLResponse]:
         return self._api.add_golden_sqls(golden_sqls)
 
     def get_golden_sqls(
-        self, db_connection_id: str = None, page: int = 1, limit: int = 10
+            self, db_connection_id: str = None, page: int = 1, limit: int = 10
     ) -> List[GoldenSQL]:
         """Gets golden sqls"""
         return self._api.get_golden_sqls(db_connection_id, page, limit)
 
     def update_golden_sql(
-        self, golden_sql_id: str, update_metadata_request: UpdateMetadataRequest
+            self, golden_sql_id: str, update_metadata_request: UpdateMetadataRequest
     ) -> GoldenSQL:
         """Gets golden sqls"""
         return self._api.update_golden_sql(golden_sql_id, update_metadata_request)
 
     def add_instruction(
-        self, instruction_request: InstructionRequest
+            self, instruction_request: InstructionRequest
     ) -> InstructionResponse:
         """Adds an instruction"""
         created_records = self._api.add_instruction(instruction_request)
@@ -563,7 +563,7 @@ class FastAPI(dataherald.server.Server):
         )
 
     def get_instructions(
-        self, db_connection_id: str = None, page: int = 1, limit: int = 10
+            self, db_connection_id: str = None, page: int = 1, limit: int = 10
     ) -> List[InstructionResponse]:
         """Gets instructions"""
         return self._api.get_instructions(db_connection_id, page, limit)
@@ -573,21 +573,21 @@ class FastAPI(dataherald.server.Server):
         return self._api.delete_instruction(instruction_id)
 
     def update_instruction(
-        self,
-        instruction_id: str,
-        instruction_request: UpdateInstruction,
+            self,
+            instruction_id: str,
+            instruction_request: UpdateInstruction,
     ) -> InstructionResponse:
         """Updates an instruction"""
         return self._api.update_instruction(instruction_id, instruction_request)
 
     def create_finetuning_job(
-        self, fine_tuning_request: FineTuningRequest, background_tasks: BackgroundTasks
+            self, fine_tuning_request: FineTuningRequest, background_tasks: BackgroundTasks
     ) -> Finetuning:
         """Creates a fine tuning job"""
         return self._api.create_finetuning_job(fine_tuning_request, background_tasks)
 
     def cancel_finetuning_job(
-        self, cancel_fine_tuning_request: CancelFineTuningRequest
+            self, cancel_fine_tuning_request: CancelFineTuningRequest
     ) -> Finetuning:
         """Cancels a fine tuning job"""
         return self._api.cancel_finetuning_job(cancel_fine_tuning_request)
@@ -605,20 +605,20 @@ class FastAPI(dataherald.server.Server):
         return self._api.delete_finetuning_job(finetuning_id)
 
     def update_finetuning_job(
-        self, finetuning_id: str, update_metadata_request: UpdateMetadataRequest
+            self, finetuning_id: str, update_metadata_request: UpdateMetadataRequest
     ) -> Finetuning:
         """Gets fine tuning jobs"""
         return self._api.update_finetuning_job(finetuning_id, update_metadata_request)
 
     async def stream_sql_generation(
-        self, request: StreamPromptSQLGenerationRequest
+            self, request: StreamPromptSQLGenerationRequest
     ) -> StreamingResponse:
         return StreamingResponse(
             self._api.stream_create_prompt_and_sql_generation(request),
             media_type="text/event-stream",
         )
-        
+
     async def upload_database_schema(
-        self, csv_file: UploadFile, background_tasks: BackgroundTasks
-    ) -> JSONResponse:
-        return await self._api.upload_database_schema(csv_file, background_tasks)
+            self, csv_file: UploadFile, background_tasks: BackgroundTasks, metadata: str = Form(...)
+    ) -> DatabaseConnectionResponse:
+        return await self._api.upload_database_schema(csv_file, background_tasks, metadata)

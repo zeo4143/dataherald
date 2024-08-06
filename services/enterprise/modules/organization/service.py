@@ -72,7 +72,7 @@ class OrganizationService:
             subscription = self.billing.create_subscription(customer.id)
         # default organization plan is CREDIT_ONLY
         organization.invoice_details = InvoiceDetails(
-            plan=PaymentPlan.CREDIT_ONLY,
+            plan=PaymentPlan.ENTERPRISE,
             stripe_customer_id=customer.id,
             stripe_subscription_id=subscription.id,
             stripe_subscription_status=subscription.status,

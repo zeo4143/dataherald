@@ -51,6 +51,22 @@ export const dbConnectionFormSchema = Yup.object({
     }),
 })
 
+export const dbConnectionUsingCSVFormSchema = Yup.object({
+  data_warehouse: Yup.string()
+    .oneOf(DATABASE_PROVIDERS.map(({ driver }) => driver))
+    .required('Please select a data warehouse'),
+  alias: Yup.string()
+    .required("The database alias can't be empty")
+    .max(50, 'The database alias is too long'),
+  file: Yup.mixed()
+    .nonNullable()
+    .required('Metadata CSV is requerd for Database connection'),
+})
+
 export type DatabaseConnectionFormValues = Yup.InferType<
   typeof dbConnectionFormSchema
+>
+
+export type DatabaseConnectionUsingCSVFormValues = Yup.InferType<
+  typeof dbConnectionUsingCSVFormSchema
 >

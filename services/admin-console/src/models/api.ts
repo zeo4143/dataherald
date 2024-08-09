@@ -301,6 +301,11 @@ export interface DatabaseConnection {
   dialect?: DatabaseDialect
 }
 
+export interface DBConnectionCSV {
+  alias: string
+  data_warehouse: string
+}
+
 export type DatabaseConnections = DatabaseConnection[]
 
 export interface SampleDatabaseConnection {

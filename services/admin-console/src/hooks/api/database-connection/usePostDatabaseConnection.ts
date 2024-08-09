@@ -7,7 +7,7 @@ const usePostDatabaseConnection = () => {
   const { apiFetcher } = useApiFetcher()
 
   const connectDatabase = useCallback(
-    async (dbConnection: DatabaseConnection, file?: File | null) => {
+    async (dbConnection: DatabaseConnection, file: File | undefined | null) => {
       const formData = new FormData()
 
       if (file) {

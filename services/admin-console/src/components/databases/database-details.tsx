@@ -1,4 +1,3 @@
-import DatabaseConnectionFormDialog from '@/components/databases/database-connection-form-dialog'
 import DatabasesTree from '@/components/databases/databases-tree'
 import {
   AlertDialog,
@@ -29,6 +28,7 @@ import { Databases, ETableSyncStatus, ErrorResponse } from '@/models/api'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import { Loader, Plus, RefreshCcw, ScanText } from 'lucide-react'
 import { FC, useState } from 'react'
+import DatabaseConnectionFormUsingCSVDialog from './database-connection-form-using-csv-dialog'
 
 interface DatabaseDetailsProps {
   databases: Databases
@@ -218,7 +218,7 @@ const DatabaseDetails: FC<DatabaseDetailsProps> = ({
             </div>
             <div className="flex gap-0">
               <Tooltip delayDuration={100}>
-                <DatabaseConnectionFormDialog
+                <DatabaseConnectionFormUsingCSVDialog
                   onConnected={onRefresh}
                   renderTrigger={() => (
                     <TooltipTrigger asChild>

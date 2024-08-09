@@ -1,4 +1,3 @@
-import DatabaseConnectionFormDialog from '@/components/databases/database-connection-form-dialog'
 import SampleDatabaseConnectionDialog from '@/components/databases/sample-database-connection-dialog'
 import { Button } from '@/components/ui/button'
 import { ContentBox } from '@/components/ui/content-box'
@@ -7,6 +6,7 @@ import DATABASE_PROVIDERS from '@/constants/database-providers'
 import { Plug } from 'lucide-react'
 import Image from 'next/image'
 import { FC } from 'react'
+import DatabaseConnectionFormUsingCSVDialog from './database-connection-form-using-csv-dialog'
 
 const DB_LOGO_SIZE = 28
 
@@ -37,7 +37,7 @@ const FirstDatabaseConnection: FC<{
     </div>
     <div className="flex flex-col items-center justify-center gap-8">
       <div className="max-w-[250px]">
-        <DatabaseConnectionFormDialog
+        <DatabaseConnectionFormUsingCSVDialog
           isFirstConnection
           onConnected={onConnected}
           onFinish={onFinish}

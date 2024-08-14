@@ -1,4 +1,5 @@
-from fastapi import APIRouter, status, UploadFile, Security
+from fastapi import APIRouter, status, UploadFile, Security, Form
+from pydantic.types import Json
 
 from modules.db_connection.models.responses import DBConnectionResponse
 from modules.db_connection.service import DBConnectionService
@@ -29,7 +30,7 @@ async def add_db_connection_using_csv(
 @ac_router.post("", status_code=status.HTTP_200_OK)
 async def ac_add_db_connection_using_csv(
         csv_file: UploadFile,
+        request_json: Json = Form(...),
         user: User = Security(authenticate_user)
 ) -> DBConnectionResponse:
     return await db_connection_service.add_db_connection_using_csv(csv_file, user.organization_id)
-

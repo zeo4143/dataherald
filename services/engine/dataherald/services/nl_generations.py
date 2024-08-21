@@ -57,6 +57,7 @@ class NLGenerationService:
         try:
             nl_generation = nl_generator.execute(
                 sql_generation=sql_generation,
+                rows=nl_generation_request.rows,
                 top_k=nl_generation_request.max_rows,
             )
         except Exception as e:

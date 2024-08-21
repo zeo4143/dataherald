@@ -14,7 +14,7 @@ from modules.db_connection.models.exceptions import (
     DBConnectionAliasExistsError,
     DBConnectionNotFoundError,
 )
-from modules.db_connection.models.requests import DBConnectionRequest, SampleDBRequest
+from modules.db_connection.models.requests import DBConnectionRequest, SampleDBRequest, DatabaseConnectionRequestUsingCSV
 from modules.db_connection.models.responses import (
     DBConnectionResponse,
     SampleDBConnectionResponse,
@@ -59,6 +59,7 @@ class DBConnectionService:
 
     async def add_db_connection_using_csv(
             self,
+            database_connection_request_using_csv: DatabaseConnectionRequestUsingCSV,
             csv_file: UploadFile,
             org_id: str
     ) -> DBConnectionResponse:
@@ -70,26 +71,28 @@ class DBConnectionService:
             raise DBConnectionAliasExistsError(db_connection.id, org_id)
 
         try:
-            metadata = DBConnectionMetadata(
+            database_connection_request_using_csv.metadata = DBConnectionMetadata(
                 dh_internal=DHDBConnectionMetadata(organization_id=org_id)
-            ).json()
+            )
 
             files = {
                 'csv_file': (csv_file.filename, await csv_file.read(), csv_file.content_type)
             }
-            data = {'metadata': metadata}
+
+            json_data = {
+                'gen_ai_database_connection_request': database_connection_request_using_csv.json()
+            }
 
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    settings.engine_url + "/database-connection-GenAI",
+                    settings.engine_url + "/database-connections-csv",
                     files=files,
-                    data=data,
+                    data=json_data,
                     timeout=settings.default_engine_timeout,
                 )
 
                 raise_engine_exception(response, org_id=org_id)
                 return DBConnectionResponse(**response.json())
-
         except Exception as e:
             HTTPException(status_code=500, detail=str(e))
 

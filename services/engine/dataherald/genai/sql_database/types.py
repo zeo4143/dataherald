@@ -1,12 +1,4 @@
-from enum import Enum
-
-from pydantic import BaseModel, validator
-
-
-class SupportedDatabaseType(Enum):
-    POSTGRESQL = "postgresql"
-    MYSQL = "mysql+pymysql"
-    REDSHIFT = "redshift+psycopg2"
+from pydantic import BaseModel
 
 
 class StorageDB(BaseModel):
@@ -16,7 +8,7 @@ class StorageDB(BaseModel):
     host: str
     port: int
     database: str
-    db_type: SupportedDatabaseType | None
+    db_type: str
 
 
 class ColumnDetails(BaseModel):

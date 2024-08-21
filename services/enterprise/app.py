@@ -25,7 +25,6 @@ from modules.organization.invoice import controller as invoice_controller
 from modules.table_description import controller as table_description_controller
 from modules.user import controller as user_controller
 from modules.db_connection import gen_ai_controller as gen_ai_database_controller
-from modules.generation import gen_ai_controller as gen_ai_sql_generation_controller
 
 tags_metadata = [
     {"name": "Authentication", "description": "Login endpoints for authentication"},
@@ -62,7 +61,6 @@ app.add_middleware(
 app.add_exception_handler(BaseError, exception_handler)
 
 app.include_router(gen_ai_database_controller.router, tags=["Gen AI Database Connection"])
-app.include_router(gen_ai_sql_generation_controller.router, tags=["Gen AI SQL Generation"])
 app.include_router(db_connection_controller.router, tags=["Database Connection"])
 app.include_router(finetuning_controller.router, tags=["Finetuning"])
 app.include_router(golden_sql_controller.router, tags=["Golden SQL"])
@@ -72,7 +70,6 @@ app.include_router(generation_controller.router, tags=["Generation"])
 app.include_router(table_description_controller.router, tags=["Table Description"])
 
 app.include_router(gen_ai_database_controller.ac_router, tags=["Gen AI Database Connection"])
-app.include_router(gen_ai_sql_generation_controller.ac_router, tags=["Gen AI SQL Generation"])
 app.include_router(db_connection_controller.ac_router, tags=["Database Connection"])
 app.include_router(finetuning_controller.ac_router, tags=["Finetuning"])
 app.include_router(golden_sql_controller.ac_router, tags=["Golden SQL"])

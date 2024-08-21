@@ -104,6 +104,12 @@ class DatabaseConnectionRequest(BaseModel):
     metadata: dict | None
 
 
+class DatabaseConnectionRequestUsingCSV(BaseModel):
+    alias: str
+    data_warehouse: str
+    metadata: dict
+
+
 class ForeignKeyDetail(BaseModel):
     field_name: str
     reference_table: str

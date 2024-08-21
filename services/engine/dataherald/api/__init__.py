@@ -39,7 +39,7 @@ from dataherald.types import (
     RefreshTableDescriptionRequest,
     ScannerRequest,
     TableDescriptionRequest,
-    UpdateInstruction,
+    UpdateInstruction, DatabaseConnectionRequestUsingCSV,
 )
 
 
@@ -276,7 +276,10 @@ class API(Component, ABC):
         pass
 
     @abstractmethod
-    async def upload_database_schema(
-            self, csv_file: UploadFile, background_tasks: BackgroundTasks, metadata: str = Form(...)
+    async def create_database_connection_using_csv(
+            self,
+            database_connection_request_using_csv: DatabaseConnectionRequestUsingCSV,
+            csv_file: UploadFile,
+            background_tasks: BackgroundTasks
     ) -> DatabaseConnectionResponse:
         pass

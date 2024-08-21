@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 import pytz
@@ -39,6 +40,17 @@ class SQLGenerationResponse(BaseResponse):
     tokens_used: int | None
     confidence_score: float | None
     error: str | None
+
+    @validator("sql")
+    def clean_sql_query(cls, v):
+        # Remove comments (both single-line and multi-line)
+        query = re.sub(r'--.*', '', v)  # Single-line comments
+        query = re.sub(r'/\*.*?\*/', '', query, flags=re.DOTALL)  # Multi-line comments
+
+        # Remove newline characters and extra spaces
+        query = re.sub(r'\s+', ' ', query).strip()
+
+        return query
 
     @validator("completed_at", pre=True, always=True)
     def completed_at_as_string(cls, v):

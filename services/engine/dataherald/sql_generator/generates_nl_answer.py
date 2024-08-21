@@ -32,6 +32,7 @@ class GeneratesNlAnswer:
 
     def execute(
         self,
+        rows: list[dict],
         sql_generation: SQLGeneration,
         top_k: int = 100,
     ) -> NLGeneration:
@@ -48,7 +49,6 @@ class GeneratesNlAnswer:
             model_name=self.llm_config.llm_name,
             api_base=self.llm_config.api_base,
         )
-        database = SQLDatabase.get_sql_engine(database_connection, True)
 
         if sql_generation.status == "INVALID":
             return NLGeneration(
@@ -58,12 +58,8 @@ class GeneratesNlAnswer:
             )
 
         try:
-            query = database.parser_to_filter_commands(sql_generation.sql)
-            with database._engine.connect() as connection:
-                execution = connection.execute(text(query))
-                result = execution.fetchmany(top_k)
-            rows = []
-            for row in result:
+            new_rows = []
+            for row in rows:
                 modified_row = {}
                 for key, value in zip(row.keys(), row, strict=True):
                     if type(value) in [
@@ -72,12 +68,12 @@ class GeneratesNlAnswer:
                     ]:  # Check if the value is an instance of datetime.date
                         modified_row[key] = str(value)
                     elif (
-                        type(value) is Decimal
+                            type(value) is Decimal
                     ):  # Check if the value is an instance of decimal.Decimal
                         modified_row[key] = float(value)
                     else:
                         modified_row[key] = value
-                rows.append(modified_row)
+                new_rows.append(modified_row)
 
         except SQLInjectionError as e:
             raise SQLInjectionError(

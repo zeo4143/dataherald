@@ -45,6 +45,7 @@ class StreamPromptSQLGenerationRequest(StreamSQLGenerationRequest):
 
 class NLGenerationRequest(BaseModel):
     llm_config: LLMConfig | None
+    rows: list[dict]
     max_rows: int = 100
     metadata: dict | None
 

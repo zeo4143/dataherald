@@ -16,7 +16,7 @@ const usePostDatabaseConnectionCSV = () => {
       formData.append('request_json', JSON.stringify(dbConnection))
 
       return apiFetcher<DatabaseConnection>(
-        `${API_URL}/database-connections-gen-ai`,
+        `${API_URL}/database-connections-csv`,
         {
           method: 'POST',
           body: formData,

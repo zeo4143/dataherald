@@ -39,6 +39,7 @@ class SQLGenerationRequest(BaseModel):
 
 
 class NLGenerationRequest(BaseModel):
+    rows: list[dict] | None = []
     max_rows: int | None
     metadata: dict[str, Any] | None = {}
 

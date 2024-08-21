@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List
 
@@ -6,6 +7,7 @@ from fastapi import BackgroundTasks, status, UploadFile, Form
 from fastapi import FastAPI as _FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.routing import APIRoute
+from pydantic.types import Json
 
 import dataherald
 from dataherald.api.types.query import Query
@@ -43,6 +45,7 @@ from dataherald.types import (
     ScannerRequest,
     TableDescriptionRequest,
     UpdateInstruction,
+    DatabaseConnectionRequestUsingCSV,
 )
 
 
@@ -67,6 +70,13 @@ class FastAPI(dataherald.server.Server):
 
         self.router.add_api_route(
             "/api/v1/database-connections",
+            self.list_database_connections,
+            methods=["GET"],
+            tags=["Database connections"],
+        )
+
+        self.router.add_api_route(
+            "/api/v1/database-connections",
             self.create_database_connection,
             methods=["POST"],
             status_code=201,
@@ -74,10 +84,11 @@ class FastAPI(dataherald.server.Server):
         )
 
         self.router.add_api_route(
-            "/api/v1/database-connections",
-            self.list_database_connections,
-            methods=["GET"],
-            tags=["Database connections"],
+            "/api/v1/database-connections-csv",
+            self.create_database_connection_using_csv,
+            methods=["POST"],
+            status_code=201,
+            tags=["Database connections"]
         )
 
         self.router.add_api_route(
@@ -368,13 +379,6 @@ class FastAPI(dataherald.server.Server):
             "/api/v1/heartbeat", self.heartbeat, methods=["GET"], tags=["System"]
         )
 
-        self.router.add_api_route(
-            "/api/v1/database-connection-GenAI",
-            self.upload_database_schema,
-            methods=["POST"],
-            tags=["GenAI"]
-        )
-
         self._app.include_router(self.router)
         use_route_names_as_operation_ids(self._app)
 
@@ -618,7 +622,13 @@ class FastAPI(dataherald.server.Server):
             media_type="text/event-stream",
         )
 
-    async def upload_database_schema(
-            self, csv_file: UploadFile, background_tasks: BackgroundTasks, metadata: str = Form(...)
+    async def create_database_connection_using_csv(
+            self,
+            csv_file: UploadFile,
+            background_tasks: BackgroundTasks,
+            database_connection_request_using_csv: Json = Form(...)
     ) -> DatabaseConnectionResponse:
-        return await self._api.upload_database_schema(csv_file, background_tasks, metadata)
+        database_connection_request_using_csv = DatabaseConnectionRequestUsingCSV(
+            **database_connection_request_using_csv
+        )
+        return await self._api.create_database_connection_using_csv(database_connection_request_using_csv, csv_file, background_tasks)
